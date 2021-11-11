@@ -1,8 +1,8 @@
 class RecipeCard extends HTMLElement {
   constructor() {
     // Part 1 Expose - TODO
-
-    // You'll want to attach the shadow DOM here
+    super()
+    this.shadow = this.attachShadow({ mode: 'open' });
   }
 
   set data(data) {
@@ -100,6 +100,54 @@ class RecipeCard extends HTMLElement {
     // created in the constructor()
 
     // Part 1 Expose - TODO
+    this.shadow.appendChild(card);
+    this.shadow.appendChild(styleElem);
+
+    const thumbnail = document.createElement('img')
+    thumbnail.setAttribute('src', searchForKey(data, 'thumbnailUrl'))
+    thumbnail.setAttribute('alt', searchForKey(data, 'headline'))
+    card.append(thumbnail)
+
+    const ptitle = document.createElement('p')
+    ptitle.setAttribute('class', 'title')
+    const alink = document.createElement('a')
+    alink.setAttribute('href', searchForKey(data, 'url'))
+    alink.textContent = searchForKey(data, 'headline')
+    ptitle.append(alink)
+    card.append(ptitle)
+
+    const porg = document.createElement('p')
+    porg.setAttribute('class', 'organization')
+    porg.textContent = getOrganization(data)
+    card.append(porg)
+
+    const divrating = document.createElement('div')
+    divrating.setAttribute('class', 'rating')
+    const ratingspan = document.createElement('span')
+    var rating = searchForKey(data, 'ratingValue')
+    if (!rating) {
+      ratingspan.textContent = 'No Reviews'
+      divrating.append(ratingspan)
+    } else {
+      ratingspan.textContent = rating;
+      divrating.append(ratingspan)
+      const ratingicon = document.createElement('img')
+      ratingicon.setAttribute('src', 'assets/images/icons/' + Math.floor(rating) + '-star.svg')
+      divrating.append(ratingicon)
+      const countspan = document.createElement('span')
+      countspan.textContent = '(' + searchForKey(data, 'ratingCount') + ')'
+      divrating.append(countspan)
+    }
+    card.append(divrating)
+
+    const time = document.createElement('time')
+    time.textContent = convertTime(searchForKey(data, 'totalTime'))
+    card.append(time)
+
+    const pingredients = document.createElement('p')
+    pingredients.setAttribute('class', 'ingredients')
+    pingredients.textContent = searchForKey(data, 'recipeIngredient')
+    card.append(pingredients)
   }
 }
 
